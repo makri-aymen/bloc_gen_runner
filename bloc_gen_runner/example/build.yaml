@@ -1,0 +1,7 @@
+targets:
+  $default:
+    builders:
+      bloc_gen_runner:
+        options:
+          equatable: true
+          transformer: "debounce(milliseconds: 700)"

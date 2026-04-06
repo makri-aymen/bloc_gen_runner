@@ -1,0 +1,28 @@
+targets:
+  $default:
+    builders:
+      bloc_gen_runner:
+        options:
+          transformer: 'concurrent()'
+          with_event_prefix: true
+          with_state_prefix: true
+          copy_with: true
+          state_when: true
+          build_when: true
+          listen_when: true
+          equatable: true
+          isBuilder: true
+          isListener: false
+
+builders:
+  bloc_gen_runner:
+    import: "package:bloc_gen_runner/bloc_gen_runner.dart"
+    # top level function that start the build
+    builder_factories: ["blocGeneratorBuilder"]
+    # The `partId` argument to `SharedPartBuilder` is "info"
+    build_extensions: {".dart": [".g.part"]}
+    auto_apply: dependents
+    build_to: cache # cache source
+    # To copy the `.g.part` content into `.g.dart` in the source tree
+    applies_builders: ["source_gen:combining_builder"]
+    is_optional: true
