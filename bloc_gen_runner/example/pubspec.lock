@@ -53,18 +53,17 @@ packages:
     dependency: "direct main"
     description:
       name: bloc_gen_annotations
-      sha256: d1d114a5f6e4566a3d6ef4d1789706b32fa42cffec7a6e742989408a49b0b306
+      sha256: "90b63c1daedfd35d6555f0007924ea89dc52dfbeff8ff0e317b44f7bc71e17c5"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.1"
+    version: "0.0.1+1"
   bloc_gen_runner:
     dependency: "direct dev"
     description:
-      name: bloc_gen_runner
-      sha256: "1119f189db585add918a6b53023bb9628097bf43bf35f1aa1ef8a040eb126f7d"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.1"
+      path: ".."
+      relative: true
+    source: path
+    version: "0.0.1+2"
   boolean_selector:
     dependency: transitive
     description:

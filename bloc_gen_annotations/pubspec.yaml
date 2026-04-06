@@ -1,7 +1,7 @@
 name: bloc_gen_annotations
 description: "Annotations and configuration types for bloc_gen_runner. Provides a clean, type-safe Dart API for decorating BLoC classes and events — including a sealed transformer hierarchy (Concurrent, Sequential, Restartable, Droppable, Debounce, Throttle) that enforces valid configurations at compile time. Depend on this package in your app; bloc_gen_runner goes in dev_dependencies."
-version: 0.0.1
-publish_to: https://github.com/makri-aymen/bloc_gen_runner
+version: 0.0.1+1
+# Published on GitHub: https://github.com/makri-aymen/bloc_gen_runner
 
 environment:
   sdk: ">=3.8.0 <4.0.0"
