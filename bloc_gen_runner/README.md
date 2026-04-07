@@ -1,7 +1,8 @@
 # bloc_gen_runner
 
-[![pub version](https://img.shields.io/pub/v/bloc_gen_runner.svg)](https://pub.dev/packages/bloc_gen_runner)
+[![pub version](https://img.shields.io/pub/v/bloc_gen_annotations.svg)](https://pub.dev/packages/bloc_gen_annotations)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/makri-aymen/bloc_gen_runner.svg?style=flat&logo=github&colorB=deeppink&label=stars)](https://github.com/makri-aymen/bloc_gen_runner)
 
 A `build_runner` code generator for the [BLoC](https://pub.dev/packages/bloc) state management library. Generates event classes, state classes, equality logic, `copyWith`, and event transformer wiring — all from a single sealed class declaration.
 
@@ -408,3 +409,7 @@ If something feels off, unclear, or missing in the generated output, don't hesit
 ## License
 
 MIT — see [LICENSE](LICENSE)
+
+## Maintainers
+
+- [Makri Aymen Abderraouf](https://github.com/makri-aymen)
