@@ -79,10 +79,10 @@ targets:
           equatable: true
 
           # If true, this state is included in the buildWhen function
-          isBuilder: true
+          is_builder: true
 
           # If true, this state is included in the listenWhen function
-          isListener: false
+          is_l_istener: false
 ```
 
 ---
@@ -375,8 +375,8 @@ BlocListener<CounterBloc, CounterState>(
 | `build_when`        | `bool`   | `true`           | Generate `buildWhen` — requires `isBuilder: true`   |
 | `listen_when`       | `bool`   | `true`           | Generate `listenWhen` — requires `isListener: true` |
 | `equatable`         | `bool`   | `true`           | Extend `Equatable` on generated classes             |
-| `isBuilder`         | `bool`   | `true`           | Include this state in the generated `buildWhen`    |
-| `isListener`        | `bool`   | `false`          | Include this state in the generated `listenWhen`   |
+| `is_builder`         | `bool`   | `true`           | Include this state in the generated `buildWhen`    |
+| `is_listener`        | `bool`   | `false`          | Include this state in the generated `listenWhen`   |
 
 Options can be overridden per-annotation:
 
