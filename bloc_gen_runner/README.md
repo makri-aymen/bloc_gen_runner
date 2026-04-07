@@ -1,6 +1,7 @@
 # bloc_gen_runner
 
-[![pub version](https://img.shields.io/pub/v/bloc_gen_annotations.svg)](https://pub.dev/packages/bloc_gen_annotations)
+[![pub version](https://img.shields.io/pub/v/bloc_gen_runner.svg)](https://pub.dev/packages/bloc_gen_runner)
+[![pub points](https://img.shields.io/pub/points/bloc_gen_runner)](https://pub.dev/packages/bloc_gen_runner/score)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/makri-aymen/bloc_gen_runner.svg?style=flat&logo=github&colorB=deeppink&label=stars)](https://github.com/makri-aymen/bloc_gen_runner)
 
@@ -11,7 +12,7 @@ A `build_runner` code generator for the [BLoC](https://pub.dev/packages/bloc) st
 ## Table of Contents
 
 - [Installation](#installation)
-- [Configuration](#configuration)
+- [Global Configuration (Optional)](#configuration)
 - [Quick Start](#quick-start)
 - [Generated Output](#generated-output)
 - [Transformer Wiring](#transformer-wiring)
@@ -37,7 +38,7 @@ dev_dependencies:
 
 ---
 
-## Configuration
+## Global Configuration (Optional)
 
 Create a `build.yaml` at the root of your project:
 

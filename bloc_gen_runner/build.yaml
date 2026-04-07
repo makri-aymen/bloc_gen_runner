@@ -11,8 +11,8 @@ targets:
           build_when: true
           listen_when: true
           equatable: true
-          isBuilder: true
-          isListener: false
+          is_builder: true
+          is_listener: false
 
 builders:
   bloc_gen_runner:

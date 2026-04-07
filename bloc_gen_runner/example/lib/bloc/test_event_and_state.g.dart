@@ -83,12 +83,13 @@ class EmptyState extends Equatable implements TestState {
 
 extension TestStateExtension on TestState {
   bool get isBuilder =>
+      this is MainState || this is LoadingState || this is EmptyState;
+
+  bool get isListener =>
       this is MainState ||
       this is LoadingState ||
       this is ErrorState ||
       this is EmptyState;
-
-  bool get isListener => this is ErrorState || this is EmptyState;
 
   T stateWhen<T>({
     required T Function() orElse,
@@ -112,6 +113,18 @@ extension TestStateExtension on TestState {
     required T Function(List<String> names, DateTime birthDay, List<int>? ages)
     main,
     required T Function() loading,
+    required T Function() empty,
+  }) => switch (this) {
+    MainState mainS => main(mainS.names, mainS.birthDay, mainS.ages),
+    LoadingState _ => loading(),
+    EmptyState _ => empty(),
+    _ => null,
+  };
+
+  T? listenWhen<T>({
+    required T Function(List<String> names, DateTime birthDay, List<int>? ages)
+    main,
+    required T Function() loading,
     required T Function(Exception exception) error,
     required T Function() empty,
   }) => switch (this) {
@@ -119,14 +132,5 @@ extension TestStateExtension on TestState {
     LoadingState _ => loading(),
     ErrorState errorS => error(errorS.exception),
     EmptyState _ => empty(),
-  };
-
-  T? listenWhen<T>({
-    required T Function(Exception exception) error,
-    required T Function() empty,
-  }) => switch (this) {
-    ErrorState errorS => error(errorS.exception),
-    EmptyState _ => empty(),
-    _ => null,
   };
 }

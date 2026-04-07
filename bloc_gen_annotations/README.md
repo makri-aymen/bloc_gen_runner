@@ -1,6 +1,7 @@
 # bloc_gen_annotations
 
 [![pub version](https://img.shields.io/pub/v/bloc_gen_annotations.svg)](https://pub.dev/packages/bloc_gen_annotations)
+[![pub points](https://img.shields.io/pub/points/bloc_gen_annotations)](https://pub.dev/packages/bloc_gen_annotations/score)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/makri-aymen/bloc_gen_runner.svg?style=flat&logo=github&colorB=deeppink&label=stars)](https://github.com/makri-aymen/bloc_gen_runner)
 

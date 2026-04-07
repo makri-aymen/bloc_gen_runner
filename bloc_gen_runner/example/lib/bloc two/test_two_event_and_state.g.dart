@@ -80,12 +80,13 @@ class EmptyState extends Equatable implements TestState {
 
 extension TestStateExtension on TestState {
   bool get isBuilder =>
+      this is MainState || this is LoadingState || this is EmptyState;
+
+  bool get isListener =>
       this is MainState ||
       this is LoadingState ||
       this is ErrorState ||
       this is EmptyState;
-
-  bool get isListener => this is ErrorState || this is EmptyState;
 
   T stateWhen<T>({
     required T Function() orElse,
