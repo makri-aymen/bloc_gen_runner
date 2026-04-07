@@ -2,6 +2,7 @@
 
 [![pub version](https://img.shields.io/pub/v/bloc_gen_annotations.svg)](https://pub.dev/packages/bloc_gen_annotations)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/makri-aymen/bloc_gen_runner.svg?style=flat&logo=github&colorB=deeppink&label=stars)](https://github.com/makri-aymen/bloc_gen_runner)
 
 Annotations for [`bloc_gen_runner`](https://pub.dev/packages/bloc_gen_runner) — a code generator that eliminates BLoC boilerplate including event classes, state classes, equality logic, `copyWith`, `stateWhen`, and event transformer wiring.
 
@@ -226,3 +227,7 @@ Contributions, bug reports, and feature suggestions are very welcome!
 ## License
 
 MIT — see [LICENSE](LICENSE)
+
+## Maintainers
+
+- [Makri Aymen Abderraouf](https://github.com/makri-aymen)
