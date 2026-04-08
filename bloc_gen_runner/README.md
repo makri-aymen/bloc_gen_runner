@@ -40,7 +40,7 @@ dev_dependencies:
 
 ## Global Configuration (Optional)
 
-Create a `build.yaml` at the root of your project:
+Create a `build.yaml` at the root of your project, and edit the global config of the generator
 
 ```yaml
 targets:
@@ -82,7 +82,7 @@ targets:
           is_builder: true
 
           # If true, this state is included in the listenWhen function
-          is_l_istener: false
+          is_listener: false
 ```
 
 ---
@@ -101,7 +101,6 @@ part 'counter_event.g.dart';
 sealed class CounterEvent {
   const factory CounterEvent.increment() = IncrementEvent;
   const factory CounterEvent.decrement() = DecrementEvent;
-
   @BlocEvent(transformer: Debounce(Duration(milliseconds: 300)))
   const factory CounterEvent.search({required String query}) = SearchEvent;
 }
@@ -117,6 +116,7 @@ part 'counter_state.g.dart';
 
 @BlocStates()
 sealed class CounterState {
+  @BlocState(isBuilder: false, isListener: true)
   const factory CounterState.initial() = InitialState;
   const factory CounterState.loaded({required int count}) = LoadedState;
   const factory CounterState.error({required String message}) = ErrorState;
@@ -188,33 +188,41 @@ For the states:
 ```dart
 // counter_state.g.dart
 
-class CounterInitialState extends Equatable implements CounterState {
-  const CounterInitialState();
+class InitialState extends Equatable implements CounterState {
+  const InitialState();
 
   @override
   List<Object?> get props => [];
 }
 
-class CounterLoadedState extends Equatable implements CounterState {
+class LoadedState extends Equatable implements CounterState {
   final int count;
-  const CounterLoadedState({required this.count});
+  const LoadedState({required this.count});
 
-  CounterLoadedState copyWith({int? count}) =>
-      CounterLoadedState(count: count ?? this.count);
+  LoadedState copyWith({int? count}) =>
+      LoadedState(count: count ?? this.count);
 
   @override
   List<Object?> get props => [count];
 }
 
-class CounterErrorState extends Equatable implements CounterState {
+class ErrorState extends Equatable implements CounterState {
   final String message;
-  const CounterErrorState({required this.message});
+  const ErrorState({required this.message});
 
-  CounterErrorState copyWith({String? message}) =>
-      CounterErrorState(message: message ?? this.message);
+  ErrorState copyWith({String? message}) =>
+      ErrorState(message: message ?? this.message);
 
   @override
   List<Object?> get props => [message];
+}
+
+extension CounterStateExtension on CounterState {
+  bool get isBuilder =>
+      this is LoadedState || this is ErrorState;
+
+  bool get isListener =>
+      this is InitialState;
 }
 ```
 

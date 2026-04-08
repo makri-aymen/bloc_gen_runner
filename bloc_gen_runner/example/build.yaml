@@ -3,7 +3,8 @@ targets:
     builders:
       bloc_gen_runner:
         options:
+          copy_with: true
           equatable: true
           transformer: "debounce(milliseconds: 700)"
           is_builder: false
-          is_listener: true
+          is_listener: false

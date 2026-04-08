@@ -1,6 +1,6 @@
-import 'package:example/bloc/test_bloc.dart';
-import 'package:example/bloc/test_event_and_state.dart';
+import 'package:example/bloc/counter_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,7 +29,19 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final testBloc = TestBloc();
+  late final CounterBloc counterBloc;
+
+  @override
+  void initState() {
+    counterBloc = CounterBloc();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    counterBloc.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,19 +55,77 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: .center,
           children: [
             const Text('You have pushed the button this many times:'),
-            Text(
-              'Okey Baby',
-              style: Theme.of(context).textTheme.headlineMedium,
+            BlocConsumer<CounterBloc, CounterState>(
+              bloc: counterBloc,
+              listener: (context, state) => state.listenWhen(
+                evenNumber: () {
+                  final snackBar = SnackBar(
+                    content: const Text('Even number'),
+                    action: SnackBarAction(
+                      label: 'Undo',
+                      onPressed: () {
+                        counterBloc.add(DecrementEvent());
+                      },
+                    ),
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                },
+                oddNumber: () {
+                  final snackBar = SnackBar(
+                    content: const Text('Odd number'),
+                    action: SnackBarAction(
+                      label: 'Undo',
+                      onPressed: () {
+                        counterBloc.add(DecrementEvent());
+                      },
+                    ),
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                },
+              ),
+              listenWhen: (previous, current) => current.isListener,
+              buildWhen: (previous, current) => current.isBuilder,
+              builder: (context, state) => state.buildWhen(
+                main: (count) => Text(
+                  "$count",
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+                orElse: () => Text(
+                  'State not handled',
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+              ),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          testBloc.add(InitializeEvent(userId: 123));
-        },
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+      floatingActionButton: Column(
+        mainAxisAlignment: .end,
+        children: [
+          FloatingActionButton(
+            onPressed: () async {
+              counterBloc.add(IncrementEvent());
+            },
+            tooltip: 'Increment',
+            child: const Icon(Icons.plus_one),
+          ),
+          SizedBox(height: 20),
+          FloatingActionButton(
+            onPressed: () async {
+              counterBloc.add(DecrementEvent());
+            },
+            tooltip: 'Decrement',
+            child: const Icon(Icons.exposure_minus_1),
+          ),
+          SizedBox(height: 20),
+          FloatingActionButton(
+            onPressed: () async {
+              counterBloc.add(RestartEvent());
+            },
+            tooltip: 'Restart',
+            child: const Icon(Icons.replay),
+          ),
+        ],
       ),
     );
   }

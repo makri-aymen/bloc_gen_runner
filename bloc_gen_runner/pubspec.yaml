@@ -1,6 +1,6 @@
 name: bloc_gen_runner
 description: "Zero-boilerplate BLoC generation simplifying bloc_concurrency equatable packages, and 6 event transformers via annotations."
-version: 0.0.1+6
+version: 0.0.1+7
 # Published on GitHub: https://github.com/makri-aymen/bloc_gen_runner
 repository: https://github.com/makri-aymen/bloc_gen_runner
 issue_tracker: https://github.com/makri-aymen/bloc_gen_runner/issues
@@ -27,7 +27,7 @@ dependencies:
   analyzer: ^10.0.0
   source_gen: ^4.2.2
   code_builder: ^4.11.1
-  bloc_gen_annotations: ^0.0.1+2
+  bloc_gen_annotations: 0.0.1+4
 
 dev_dependencies:
   flutter_test:

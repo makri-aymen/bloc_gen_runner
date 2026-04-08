@@ -269,6 +269,13 @@ class BlocStatesGenerator extends GeneratorForAnnotation<BlocStates> {
     final prefix = blocGeneratorConfig.withStatePrefix ? "State" : "";
     // stateWhen<T> parameters
     final methodParams = <Parameter>[
+      Parameter(
+        (p) => p
+          ..name = 'orElse'
+          ..named = true
+          ..required = true
+          ..type = refer('T Function()'),
+      ),
       // one optional callback per state
       ...states.map((s) {
         final paramName = s.name!; // e.g. "main"
@@ -307,18 +314,17 @@ class BlocStatesGenerator extends GeneratorForAnnotation<BlocStates> {
         })
         .join(',\n      ');
 
-    final wildcard = exhaustive ? '' : '\n      _ => null,';
-
     final buildWhenBody = Code('''
   switch (this) {
-      $cases,$wildcard
+      $cases,
+      _ => orElse(),
     }''');
 
     return Method(
       (m) => m
         ..name = 'buildWhen'
         ..types = ListBuilder<Reference>([refer('T')])
-        ..returns = refer('T?')
+        ..returns = refer('T')
         ..lambda = true
         ..optionalParameters = ListBuilder<Parameter>(methodParams)
         ..body = buildWhenBody,
