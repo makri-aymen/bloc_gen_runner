@@ -1,13 +1,30 @@
-# bloc_gen_runner
+
+<div align="center">
+
+
+<h1>bloc_gen_runner</h1>
+
+<br>
 
 [![pub version](https://img.shields.io/pub/v/bloc_gen_runner.svg)](https://pub.dev/packages/bloc_gen_runner)
 [![pub points](https://img.shields.io/pub/points/bloc_gen_runner)](https://pub.dev/packages/bloc_gen_runner/score)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/makri-aymen/bloc_gen_runner.svg?style=flat&logo=github&colorB=deeppink&label=stars)](https://github.com/makri-aymen/bloc_gen_runner)
+[![Tests](https://github.com/makri-aymen/bloc_gen_runner/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/makri-aymen/bloc_gen_runner/actions/workflows/tests.yml)
+[![build](https://img.shields.io/github/actions/workflow/status/makri-aymen/bloc_gen_runner/main.yaml?branch=main&logo=github&label=build)](https://github.com/makri-aymen/bloc_gen_runner/actions/workflows/main.yaml)
+[![codecov](https://img.shields.io/codecov/c/github/makri-aymen/bloc_gen_runner?logo=codecov&label=codecov)](https://codecov.io/gh/makri-aymen/bloc_gen_runner)
+[![Support me on Ko-fi](https://img.shields.io/badge/Support%20me%20on%20Ko--fi-%23FFDD00.svg?style=flat&logo=ko-fi&logoColor=black)](https://ko-fi.com/aymenmak)
+
+<br>
+
+<p align="center">⭐ Please star this repository to support the project! ⭐</p>
+
+<br>
 
 A `build_runner` code generator for the [BLoC](https://pub.dev/packages/bloc) state management library. Generates event classes, state classes, equality logic, `copyWith`, and event transformer wiring — all from a single sealed class declaration.
 
----
+<br>
+</div>
 
 ## Table of Contents
 
@@ -48,11 +65,7 @@ targets:
     builders:
       bloc_gen_runner:
         options:
-          # Concurrency strategy applied when no transformer annotation is set.
-          # concurrent() sequential() droppable() restartable()
-          # debounce(milliseconds: 300)
-          # debounce(milliseconds: 300, andThen: restartable())
-          # throttle(seconds: 1, andThen: sequential())
+          # Transformer that will be applied globaly on every event
           transformer: 'concurrent()'
 
           # Suffix generated event classes with 'Event'
@@ -85,41 +98,50 @@ targets:
           is_listener: false
 ```
 
+### Supported transformer strings in `build.yaml`
+
+```yaml
+transformer: 'concurrent()'
+transformer: 'sequential()'
+transformer: 'restartable()'
+transformer: 'droppable()'
+transformer: 'debounce(milliseconds: 300)'
+transformer: 'debounce(seconds: 1, andThen: restartable())'
+transformer: 'throttle(milliseconds: 500, andThen: sequential())'
+```
+
 ---
 
 ## Quick Start
 
-**1. Declare your events:**
+**1. Declare your events and states:**
 
 ```dart
-// counter_event.dart
 import 'package:bloc_gen_annotations/bloc_gen_annotations.dart';
 
-part 'counter_event.g.dart';
+part 'counter_bloc.g.dart';
 
-@BlocEvents(transformer: Restartable())
+@BlocEvents(transformer: Droppable())
 sealed class CounterEvent {
   const factory CounterEvent.increment() = IncrementEvent;
   const factory CounterEvent.decrement() = DecrementEvent;
-  @BlocEvent(transformer: Debounce(Duration(milliseconds: 300)))
-  const factory CounterEvent.search({required String query}) = SearchEvent;
+  @BlocEvent(transformer: Debounce(Duration(milliseconds: 300), transformer: Sequential()))
+  const factory CounterEvent.restart() = RestartEvent;
 }
-```
 
-**2. Declare your states:**
-
-```dart
-// counter_state.dart
-import 'package:bloc_gen_annotations/bloc_gen_annotations.dart';
-
-part 'counter_state.g.dart';
-
-@BlocStates()
+@BlocStates(
+  copyWith: true,
+  stateWhen: true,
+  buildWhen: true,
+  listenWhen: true,
+)
 sealed class CounterState {
-  @BlocState(isBuilder: false, isListener: true)
-  const factory CounterState.initial() = InitialState;
-  const factory CounterState.loaded({required int count}) = LoadedState;
-  const factory CounterState.error({required String message}) = ErrorState;
+  @BlocState(isBuilder: true, isListener: false)
+  const factory CounterState.main({required int count}) = MainState;
+  @BlocState(isListener: true, isBuilder: false)
+  const factory CounterState.evenNumber() = EvenNumberState;
+  @BlocState(isListener: true, isBuilder: false)
+  const factory CounterState.oddNumber() = OddNumberState;
 }
 ```
 
@@ -134,22 +156,37 @@ dart run build_runner watch --delete-conflicting-outputs
 **4. Write your BLoC:**
 
 ```dart
-// counter_bloc.dart
-import 'package:bloc/bloc.dart';
-import 'package:bloc_gen_annotations/bloc_gen_annotations.dart';
-
+// counter_bloc.dart (continued)
 class CounterBloc extends Bloc<CounterEvent, CounterState>
     with BlocTransformerMixin {
-  CounterBloc() : super(const CounterInitialState()) {
+  CounterBloc() : super(const MainState(count: 0)) {
     // No transformer: parameter needed — BlocTransformerMixin wires it automatically
     on<IncrementEvent>(_onIncrement);
     on<DecrementEvent>(_onDecrement);
-    on<SearchEvent>(_onSearch);
+    on<RestartEvent>(_onRestart);
   }
 
-  void _onIncrement(IncrementEvent event, Emitter<CounterState> emit) { ... }
-  void _onDecrement(DecrementEvent event, Emitter<CounterState> emit) { ... }
-  void _onSearch(SearchEvent event, Emitter<CounterState> emit) { ... }
+  void _onIncrement(IncrementEvent event, Emitter<CounterState> emit) {
+    final current = state;
+    if (current is! MainState) return;
+    final next = current.count + 1;
+    emit(MainState(count: next));
+    emit(next.isEven ? const EvenNumberState() : const OddNumberState());
+    emit(MainState(count: next));
+  }
+
+  void _onDecrement(DecrementEvent event, Emitter<CounterState> emit) {
+    final current = state;
+    if (current is! MainState) return;
+    final next = current.count - 1;
+    emit(MainState(count: next));
+    emit(next.isEven ? const EvenNumberState() : const OddNumberState());
+    emit(MainState(count: next));
+  }
+
+  void _onRestart(RestartEvent event, Emitter<CounterState> emit) {
+    emit(const MainState(count: 0));
+  }
 }
 ```
 
@@ -162,67 +199,110 @@ class CounterBloc extends Bloc<CounterEvent, CounterState>
 For the events above, the generator produces:
 
 ```dart
-// counter_event.g.dart
+// counter_bloc.g.dart
 
-class IncrementEvent implements CounterEvent {
+// ─── Events ───────────────────────────────────────────────────────────────────
+
+// Inherits Droppable() from @BlocEvents
+class IncrementEvent extends EventGenerated implements CounterEvent {
   const IncrementEvent();
+
+  @override
+  EventTransformer? get transformer => droppable();
 }
 
-class DecrementEvent implements CounterEvent {
+class DecrementEvent extends EventGenerated implements CounterEvent {
   const DecrementEvent();
+
+  @override
+  EventTransformer? get transformer => droppable();
 }
 
-// SearchEvent extends EventGenerated because it carries a transformer
-class SearchEvent extends EventGenerated implements CounterEvent {
-  final String query;
-  const SearchEvent({required this.query});
+// Overrides with its own @BlocEvent transformer
+class RestartEvent extends EventGenerated implements CounterEvent {
+  const RestartEvent();
 
   @override
   EventTransformer? get transformer =>
-      debounce(Duration(milliseconds: 300), andThen: restartable());
-}
-```
-
-For the states:
-
-```dart
-// counter_state.g.dart
-
-class InitialState extends Equatable implements CounterState {
-  const InitialState();
-
-  @override
-  List<Object?> get props => [];
+      debounce(Duration(milliseconds: 300), andThen: sequential());
 }
 
-class LoadedState extends Equatable implements CounterState {
+// ─── States ───────────────────────────────────────────────────────────────────
+
+class MainState extends Equatable implements CounterState {
+  const MainState({required this.count});
+
   final int count;
-  const LoadedState({required this.count});
 
-  LoadedState copyWith({int? count}) =>
-      LoadedState(count: count ?? this.count);
+  MainState copyWith({int? count}) =>
+      MainState(count: count ?? this.count);
 
   @override
   List<Object?> get props => [count];
-}
-
-class ErrorState extends Equatable implements CounterState {
-  final String message;
-  const ErrorState({required this.message});
-
-  ErrorState copyWith({String? message}) =>
-      ErrorState(message: message ?? this.message);
 
   @override
-  List<Object?> get props => [message];
+  bool get stringify => true;
 }
 
-extension CounterStateExtension on CounterState {
-  bool get isBuilder =>
-      this is LoadedState || this is ErrorState;
+class EvenNumberState extends Equatable implements CounterState {
+  const EvenNumberState();
 
-  bool get isListener =>
-      this is InitialState;
+  @override
+  List<Object?> get props => [];
+
+  @override
+  bool get stringify => true;
+}
+
+class OddNumberState extends Equatable implements CounterState {
+  const OddNumberState();
+
+  @override
+  List<Object?> get props => [];
+
+  @override
+  bool get stringify => true;
+}
+
+// ─── Extension ────────────────────────────────────────────────────────────────
+
+extension CounterStateExtension on CounterState {
+  // true only for states annotated with isBuilder: true
+  bool get isBuilder => this is MainState;
+
+  // true only for states annotated with isListener: true
+  bool get isListener => this is EvenNumberState || this is OddNumberState;
+
+  T stateWhen<T>({
+    required T Function() orElse,
+    T Function(int count)? main,
+    T Function()? evenNumber,
+    T Function()? oddNumber,
+  }) => switch (this) {
+    MainState mainS when main != null     => main(mainS.count),
+    EvenNumberState _ when evenNumber != null => evenNumber(),
+    OddNumberState _ when oddNumber != null   => oddNumber(),
+    _ => orElse(),
+  };
+
+  // All handlers required — exhaustive over isBuilder states
+  T buildWhen<T>({
+    required T Function() orElse,
+    required T Function(int count) main,
+  }) => switch (this) {
+    MainState mainS => main(mainS.count),
+    _ => orElse(),
+  };
+
+  // All handlers required — exhaustive over isListener states
+  T? listenWhen<T>({
+    required T Function() evenNumber,
+    required T Function() oddNumber,
+  }) => switch (this) {
+    EvenNumberState _ => evenNumber(),
+    OddNumberState _ => oddNumber(),
+    _ => null,
+  };
 }
 ```
 
@@ -243,18 +323,6 @@ build.yaml transformer              ← lowest priority
 `concurrent()` at any level means no transformer is injected — the BLoC default applies.
 
 > ⚠️ **Passing `transformer:` manually to `on<E>()`** will no work when BlocTransformerMixin is used.
-
-### Supported transformer strings in `build.yaml`
-
-```yaml
-transformer: 'concurrent()'
-transformer: 'sequential()'
-transformer: 'restartable()'
-transformer: 'droppable()'
-transformer: 'debounce(milliseconds: 300)'
-transformer: 'debounce(seconds: 1, andThen: restartable())'
-transformer: 'throttle(milliseconds: 500, andThen: sequential())'
-```
 
 ---
 
@@ -301,72 +369,23 @@ final next = state.copyWith(count: state.count + 1);
 All three are generated as extension methods on the state sealed class.
 
 - **`stateWhen`** — covers all states, all handlers optional, requires an `orElse` fallback
-- **`buildWhen`** — covers only states with `isBuilder: true`, all handlers **required** — forces you to handle every builder state explicitly, returns `null` on non-builder states
+- **`buildWhen`** — covers only states with `isBuilder: true`, all handlers **required** — forces you to handle every builder state explicitly, returns the orElse value on non-builder states
 - **`listenWhen`** — covers only states with `isListener: true`, all handlers **required** — same forced exhaustiveness, returns `null` on non-listener states
 - **`isBuilder` / `isListener`** — bool getters indicating whether the current state belongs to `buildWhen` / `listenWhen`
 
 ```dart
-// Generated output
-extension CounterStateExtension on CounterState {
-  bool get isBuilder =>
-      this is LoadedState ||
-      this is ErrorState;
+// In a BlocConsumer
+buildWhen: (previous, current) => current.isBuilder,
+builder: (context, state) => state.buildWhen(
+  main: (count) => Text('$count'),  // required — compiler enforced
+  orElse: () => const SizedBox(),
+),
 
-  bool get isListener =>
-      this is ErrorState;
-
-  T stateWhen<T>({
-    required T Function() orElse,
-    T Function()? initial,
-    T Function(int count)? loaded,
-    T Function(String message)? error,
-  }) => switch (this) {
-    InitialState _ when initial != null => initial(),
-    LoadedState s when loaded != null   => loaded(s.count),
-    ErrorState s when error != null     => error(s.message),
-    _ => orElse(),
-  };
-
-  // All handlers required — exhaustive over isBuilder states
-  T? buildWhen<T>({
-    required T Function(int count) loaded,
-    required T Function(String message) error,
-  }) => switch (this) {
-    LoadedState s => loaded(s.count),
-    ErrorState s  => error(s.message),
-    _ => null,
-  };
-
-  // All handlers required — exhaustive over isListener states
-  T? listenWhen<T>({
-    required T Function(String message) error,
-  }) => switch (this) {
-    ErrorState s => error(s.message),
-    _ => null,
-  };
-}
-```
-
-```dart
-// Usage in widget
-BlocBuilder<CounterBloc, CounterState>(
-  buildWhen: (_, current) => current.isBuilder,
-  builder: (context, state) {
-    return state.buildWhen(
-      loaded: (count) => Text('$count'),    // required
-      error: (message) => Text(message),    // required
-    ) ?? const SizedBox();
-  },
-)
-
-BlocListener<CounterBloc, CounterState>(
-  listenWhen: (_, current) => current.isListener,
-  listener: (context, state) {
-    state.listenWhen(
-      error: (message) => showSnackBar(context, message), // required
-    );
-  },
-)
+listenWhen: (previous, current) => current.isListener,
+listener: (context, state) => state.listenWhen(
+  evenNumber: () => showSnackBar(context, 'Even number'),  // required
+  oddNumber:  () => showSnackBar(context, 'Odd number'),   // required
+),
 ```
 
 ---
