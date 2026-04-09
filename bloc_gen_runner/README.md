@@ -11,7 +11,7 @@
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/makri-aymen/bloc_gen_runner.svg?style=flat&logo=github&colorB=deeppink&label=stars)](https://github.com/makri-aymen/bloc_gen_runner)
 [![Tests](https://github.com/makri-aymen/bloc_gen_runner/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/makri-aymen/bloc_gen_runner/actions/workflows/tests.yml)
-[![build](https://img.shields.io/github/actions/workflow/status/makri-aymen/bloc_gen_runner/main.yaml?branch=main&logo=github&label=build)](https://github.com/makri-aymen/bloc_gen_runner/actions/workflows/main.yaml)
+[![build](https://img.shields.io/github/actions/workflow/status/makri-aymen/bloc_gen_runner/publish.yaml?branch=main&logo=github&label=build)](https://github.com/makri-aymen/bloc_gen_runner/actions/workflows/publish.yaml)
 [![codecov](https://img.shields.io/codecov/c/github/makri-aymen/bloc_gen_runner?logo=codecov&label=codecov)](https://codecov.io/gh/makri-aymen/bloc_gen_runner)
 [![Support me on Ko-fi](https://img.shields.io/badge/Support%20me%20on%20Ko--fi-%23FFDD00.svg?style=flat&logo=ko-fi&logoColor=black)](https://ko-fi.com/aymenmak)
 
